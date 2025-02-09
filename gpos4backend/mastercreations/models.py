@@ -2,11 +2,12 @@ from django.db import models
 
 # Create your models here.
 class Owner(models.Model):
-    name = models.CharField(max_length=80) 
+    firstname = models.CharField(max_length=80, blank=True, null=True)
+    lastname = models.CharField(max_length=80, blank=True, null=True)
     username = models.CharField(max_length=50, blank=True, null=True, unique=True)
     password = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(unique=True, blank=True, null=True)
-    phone = models.BigIntegerField(blank=True, null=True)
+    mobile = models.BigIntegerField(blank=True, null=True)
     whatsapp = models.BigIntegerField( blank=True, null=True)
     address1 = models.TextField(blank=True, null=True)
     address2 = models.TextField(blank=True, null=True)
