@@ -19,7 +19,7 @@ class Owner(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return self.firstname + " " + self.lastname
     
 class Business(models.Model):
     Owner_id = models.ForeignKey(Owner, on_delete=models.CASCADE)

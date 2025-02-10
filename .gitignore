@@ -48,6 +48,7 @@ var/
 *.egg-info/
 .installed.cfg
 *.egg
+gpos4env/
 
 # PyInstaller
 #  Usually these files are written by a python script from a template
@@ -87,3 +88,5 @@ local_settings.py
 
 .env
 db.sqlite3
+
+migrations/
