@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 import json
 
-from .models import Owner
+from .models import OwnerMaster
 
 # Create your views here.
 
@@ -15,7 +15,7 @@ class OwnerManageView(APIView):
         owner_data_json['firstname'] = owner_data_json['fullname'].split(' ', 1)[0]
         owner_data_json['lastname'] = owner_data_json['fullname'].split(' ', 1)[1]
 
-        new_owner = Owner.objects.create(
+        new_owner = OwnerMaster.objects.create(
             firstname = owner_data_json['firstname'],
             lastname = owner_data_json['lastname'],
             username = owner_data_json['username'],

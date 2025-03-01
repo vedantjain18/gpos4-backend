@@ -41,6 +41,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'main',
     'mastercreations',
+    'inventorymgmt',
+    'purchasemgmt',
+    'salesmgmt',
+    'accounts',
+    'employeemgmt',
+    'franchisemgmt',
+    'reports',
 ]
 
 MIDDLEWARE = [
