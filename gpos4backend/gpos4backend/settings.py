@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'employeemgmt',
     'franchisemgmt',
     'reports',
+    'customermgmt',
 ]
 
 MIDDLEWARE = [

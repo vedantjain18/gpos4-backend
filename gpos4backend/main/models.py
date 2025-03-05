@@ -1,65 +1,9 @@
 from django.db import models
 from mastercreations.models import *
-from employeemgmt.models import *
+# from employeemgmt.models import *
 # from inventorymgmt.models import *
-from mastercreations.models import *
 
 # Create your models here.
-class Company(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    about = models.CharField(max_length=355, null=True)
-    base_margin_company = models.DecimalField(blank=False, null=False, decimal_places=3, default=0)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-    
-class ItemBrand(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    about = models.CharField(max_length=355, null=True)
-    base_margin_brand = models.DecimalField(blank=False, null=False, decimal_places=3, default=0)
-    company_id=models.ForeignKey(Company, on_delete=models.CASCADE)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-
-class ItemCategory(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-    
-class ItemGroup(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    item_category_id = models.ForeignKey(ItemCategory, on_delete=models.CASCADE) # how do i make this 2D? so that i can accommodate multiple itemGroups inside a single itemCategory
-    about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-    
-class ItemSubGroup(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    item_group_id = models.ForeignKey(ItemGroup, on_delete=models.CASCADE) # how do i make this 2D? 
-    about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-    
 class ItemTaxMaster(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
@@ -85,6 +29,7 @@ class ItemTaxContainer(models.Model):
         return self.name
 
 class ItemHSN(models.Model):
+    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     item_hsn = models.CharField(max_length=255)
     item_hsn_desc = models.CharField(max_length=255)
     item_hsn_type = models.CharField(max_length=255) # HSN Or SAC
@@ -94,28 +39,6 @@ class ItemHSN(models.Model):
 
     def __str__(self):
         return f"{self.itemhsn}"
-    
-class ItemType(models.Model): # Refer to UQC Codes from tally screenshots & redefine this class
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    item_type_symbol = models.CharField(max_length=255) # Like Loose (LSE), Pieces (PCS), Hybrid (HYD), etc.
-    about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
-    
-class ItemUnit(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
-    item_unit_symbol = models.CharField(max_length=255)
-    item_unit_convert_to_grams = models.CharField(max_length=255)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.name
 
 class CentralDataHSN(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE) # [can keep it as '0']

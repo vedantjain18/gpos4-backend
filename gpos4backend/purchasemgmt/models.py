@@ -1,9 +1,9 @@
 from django.db import models
 from mastercreations.models import *
-from employeemgmt.models import *
+#from employeemgmt.models import *
 from main.models import *
 from inventorymgmt.models import *
-from mastercreations.models import *
+from accounts.models import *
 
 # Create your models here.
 class PurchaseRegister(models.Model):
