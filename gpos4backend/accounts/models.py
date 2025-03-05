@@ -1,8 +1,7 @@
 from django.db import models
 from mastercreations.models import *
-from employeemgmt.models import *
+# from employeemgmt.models import *
 from main.models import *
-from mastercreations.models import *
 
 # Create your models here.
 
@@ -40,8 +39,8 @@ class AccountsMaster(models.Model):
     acc_city = models.CharField(max_length=30, null=True, blank=True)
     acc_pincode = models.IntegerField(null=True, blank=True)
     acc_gstin = models.CharField(max_length=15, null=True, blank=True)
-    acc_g_loc_lat = models.DecimalField(max_digits=15, decimal_places=10, null=True, blank=True)
-    acc_g_loc_lang = models.DecimalField(max_digits=15, decimal_places=10, null=True, blank=True)
+    acc_g_loc_lat = models.DecimalField(max_digits=100, decimal_places=100, null=True, blank=True)
+    acc_g_loc_lang = models.DecimalField(max_digits=100, decimal_places=100, null=True, blank=True)
     acc_mob = models.PositiveIntegerField(unique=True, null=False, blank=False)
     acc_phone = models.CharField(max_length=10, null=True, blank=True)
     acc_email = models.CharField(max_length=120, null=True, blank=True)
@@ -109,7 +108,7 @@ class ModeOfPayment(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
     mop_name = models.CharField(max_length=100, blank=False, null=False)
     mop_acc_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    mop_commission_rate = models.DecimalField(max_length=100, blank=False, null=False) # Commission charged by the bank/paymemnt aggregrator like 1.5%
+    mop_commission_rate = models.DecimalField(max_digits=100, decimal_places=2, blank=False, null=False) # Commission charged by the bank/paymemnt aggregrator like 1.5%
     mop_commission_ledger = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False)
     # HandoverDateTime = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False)
@@ -128,9 +127,9 @@ class AccountsLedgerPending(models.Model):
     acc_id_name = models.CharField(max_length=100, blank=False, null=False)
     vchr_ref = models.CharField(max_length=100,  blank=True, null=True)
     vchr_narration = models.CharField(max_length=100,  blank=True, null=True)
-    crd_amt = models.DecimalField( blank=False, null=False)
-    dbt_amt = models.DecimalField( blank=False, null=False) # 
-    balance = models.IntegerField( blank=True, null=True) # Will not be required as it can be calculated from crdamt & dbtamt
+    crd_amt = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=10)
+    dbt_amt = models.DecimalField(blank=False, null=False, decimal_places=2, max_digits=10) # 
+    balance = models.IntegerField(blank=True, null=True) # Will not be required as it can be calculated from crdamt & dbtamt
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
    
@@ -142,7 +141,7 @@ class OpeningAccounts(models.Model):
     financial_year = models.CharField(blank=False, null=False, max_length=10)
     # locid = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False) # 0 if the location is invalid
     accounts_master_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    opening_balance = models.DecimalField(blank=False, null=False, max_length=50)
+    opening_balance = models.DecimalField(max_digits=100, decimal_places=2, blank=False, null=False, max_length=50)
     comments = models.CharField(blank=False, null=False)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
