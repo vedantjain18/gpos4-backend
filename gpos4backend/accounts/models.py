@@ -53,7 +53,7 @@ class AccountsMaster(models.Model):
     
 class VoucherType(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    loc_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    location_master_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
     vchr_name = models.CharField(max_length=100, blank=False, null=False) # Sales, SR, Purchase, PR, Receipt, Payment, Journal, Contra
     voucher_symbol = models.CharField(max_length=255)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False)
@@ -64,16 +64,16 @@ class VoucherType(models.Model):
     
 class AccountsVoucherEntry(models.Model):
     business_id= models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    loc_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    vchr_number = models.CharField(max_length=100,  blank=True, null=True) # only put numbers here. voucher type will be determined by VoucherType_id
+    location_master_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    voucher_number = models.CharField(max_length=100,  blank=True, null=True) # only put numbers here. voucher type will be determined by VoucherType_id
     voucher_type_id = models.ForeignKey(VoucherType, on_delete=models.CASCADE , null=False, blank=False)
-    vchr_entry_date = models.DateField(max_length=100,  blank=False, null=False)
-    vchr_entry_time = models.TimeField(max_length=100,  blank=False, null=False)
-    vchr_narration = models.CharField(max_length=100,  blank=True, null=True)
-    from_acc_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in AccountsMaster_id here?
-    to_acc_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in AccountsMaster_id here?
-    crd_amt = models.IntegerField( blank=False, null=False)
-    dbt_amt = models.IntegerField( blank=False, null=False) # this & fromaccid, toaccid & crdamt should be made a 2d array (for multiple entries)
+    voucher_entry_date = models.DateField(max_length=100,  blank=False, null=False)
+    voucher_entry_time = models.TimeField(max_length=100,  blank=False, null=False)
+    voucher_narration = models.CharField(max_length=100,  blank=True, null=True)
+    from_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False, related_name='ave_from_account_id') # How do i put in AccountsMaster_id here?
+    to_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False, related_name='ave_to_account_id') # How do i put in AccountsMaster_id here?
+    credit_amount = models.IntegerField( blank=False, null=False)
+    debit_amount = models.IntegerField( blank=False, null=False) # this & fromaccid, toaccid & crdamt should be made a 2d array (for multiple entries)
     # balance = models.IntegerField( blank=True, null=True) # Will not be required as it can be calculated from crdamt & dbtamt
     vchr_ref = models.CharField(max_length=100, blank=True, null=True)
     # vchtype = models.ForeignKey('Vouchertype', on_delete=models.CASCADE,  blank=False, null=False)
@@ -86,8 +86,8 @@ class AccountsVoucherEntry(models.Model):
 class CashHandover(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
     handover_date_time = models.DateTimeField(auto_now_add=True)
-    emp_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False) # separate from created_by coz, a manager might do an entry of cash hanndover on behalf of an employee
-    loc_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    #employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False) # separate from created_by coz, a manager might do an entry of cash hanndover on behalf of an employee
+    location_master_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
     N1 = models.DecimalField(max_digits=100, decimal_places=2, blank=False)
     N2 = models.DecimalField(max_digits=100, decimal_places=2, blank=False)
     N5 = models.DecimalField(max_digits=100, decimal_places=2, blank=False)
@@ -107,9 +107,9 @@ class CashHandover(models.Model):
 class ModeOfPayment(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
     mop_name = models.CharField(max_length=100, blank=False, null=False)
-    mop_acc_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    mop_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False, related_name='mop_mop_account_id')
     mop_commission_rate = models.DecimalField(max_digits=100, decimal_places=2, blank=False, null=False) # Commission charged by the bank/paymemnt aggregrator like 1.5%
-    mop_commission_ledger = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    mop_commission_ledger = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False, related_name='mop_mop_commission_ledger')
     # HandoverDateTime = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -142,7 +142,7 @@ class OpeningAccounts(models.Model):
     # locid = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False) # 0 if the location is invalid
     accounts_master_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False)
     opening_balance = models.DecimalField(max_digits=100, decimal_places=2, blank=False, null=False, max_length=50)
-    comments = models.CharField(blank=False, null=False)
+    comments = models.CharField(blank=False, null=False, max_length=1000)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 

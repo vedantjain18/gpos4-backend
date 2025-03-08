@@ -8,7 +8,7 @@ class OwnerMaster(models.Model):
     password = models.CharField(max_length=255, blank=False, null=False)
     email = models.EmailField(unique=True, blank=False, null=False)
     mobile = models.BigIntegerField(blank=False, null=False)
-    whatsapp = models.BigIntegerField( blank=True, null=True)
+    whatsapp = models.BigIntegerField(blank=True, null=True)
     address1 = models.TextField(blank=False, null=False)
     address2 = models.TextField(blank=False, null=False)
     city = models.CharField(max_length=255, blank=False, null=False)
@@ -23,9 +23,9 @@ class OwnerMaster(models.Model):
     
 class BusinessMaster(models.Model):
     owner_id = models.ForeignKey(OwnerMaster, on_delete=models.CASCADE)
-    businessname = models.CharField(max_length=15, blank=False)
+    business_name = models.CharField(max_length=15, blank=False)
     email = models.EmailField(unique=True, blank=False, null=False)
-    phone = models.CharField(max_length=15, blank=False, null=False)
+    mobile = models.CharField(max_length=15, blank=False, null=False)
     whatsapp = models.CharField(max_length=15, blank=True, null=True)
     address1 = models.TextField(blank=False, null=False)
     address2 = models.TextField(blank=False, null=False)
@@ -69,8 +69,8 @@ class EmployeeMaster(models.Model):
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
-    contact_number = models.CharField(max_length=20)
-    whatsapp_number = models.CharField(max_length=20, blank=True, null=True)
+    mobile = models.CharField(max_length=20)
+    whatsapp = models.CharField(max_length=20, blank=True, null=True)
     # age = models.PositiveIntegerField()
     date_of_birth = models.CharField(max_length=10)  # Changed to CharField
     gender = models.CharField(max_length=1)
@@ -93,7 +93,7 @@ class EmployeeMaster(models.Model):
     bank_acc_num = models.CharField(max_length=100)
     bank_ifsc_code = models.CharField(max_length=100)
     # objects = EmployeeMasterManager()
-    locid = models.CharField(max_length=10)
+    location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     created_by = models.CharField(max_length=100) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 

@@ -11,14 +11,14 @@ class PurchaseRegister(models.Model):
     loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     purchase_bill_no = models.CharField(max_length=50)
     purchase_bill_date = models.DateTimeField(auto_now_add=True)
-    account_id = models.ForeignKey('AccountsMaster', on_delete=models.CASCADE)
+    account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE)
     # purchase_entry_date_time = models.DateTimeField(auto_now_add=True)
     bill_total = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     other_charges = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     other_discounts = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     freight = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     net_amount = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
-    emp_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
+    #employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -48,7 +48,7 @@ class PurchaseDetails(models.Model):
 class PurchasePending(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
-    emp_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
+    #employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
     purchase_bill_no = models.CharField(max_length=50)
     purchase_bill_date = models.DateTimeField(auto_now_add=True)
     account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE)

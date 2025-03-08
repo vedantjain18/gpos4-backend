@@ -113,10 +113,10 @@ class ItemMaster(models.Model):
     item_master_product_id = models.CharField(max_length=50, blank=True, null=True)
     item_case_size = models.CharField(max_length=50, blank=True, null=True)
     item_shell = models.CharField(max_length=50, blank=True, null=True)
-    item_type_id = models.ForeignKey(ItemTaxMaster, on_delete=models.CASCADE)
+    item_type_id = models.ForeignKey(ItemType, on_delete=models.CASCADE)
     item_desc = models.TextField(blank=True, null=True)
-    item_images = models.ImageField(max_length=50, blank=True, null=True) # Change to ImageField & to 2D array to store multiple images
-    item_ingredients = models.ForeignKey(CentralDataIngredients, on_delete=models.CASCADE) #make this 2d to store multiple ingredients
+    #item_images = models.ImageField(max_length=50, blank=True, null=True) # Change to ImageField & to 2D array to store multiple images
+    item_ingredients = models.CharField(max_length=50, blank=True, null=True) #make this 2d to store multiple ingredients
     created_at = models.DateTimeField(auto_now_add=True)
     # itembarcode1 = models.CharField(max_length=50, blank=True, null=True)
     # itembarcode2 = models.CharField(max_length=50, blank=True, null=True)
@@ -159,8 +159,8 @@ class ItemIngredientsMaster(models.Model):
     
 class PhysicalStockTakingPending(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
-    emp_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
+    location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
+    # employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, related_name='pstp_employee_master_id')
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE)
     item_name = models.CharField(max_length=255)
     item_barcode = models.CharField(max_length=50)
@@ -199,7 +199,7 @@ class StockManipulation(models.Model):
     item_gst = models.IntegerField()
     stock_manipulation_comments = models.TextField()
     # item_row_total = models.DecimalField(max_digits=10, decimal_places=2)
-    emp_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
+    # employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
     stock_manipulation_date_time = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
@@ -209,7 +209,7 @@ class StockManipulation(models.Model):
     
 class PriceTagsPrinting(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
+    location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE)
     item_barcode = models.CharField(max_length=50)
     child_barcode = models.CharField(max_length=50)
@@ -221,9 +221,10 @@ class PriceTagsPrinting(models.Model):
     # item_qty = models.IntegerField()
     # item_gst = models.IntegerField()
     item_row_total = models.DecimalField(max_digits=10, decimal_places=2)
-    emp_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
+    #employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
     price_tag_printing_date_time = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.child_barcode

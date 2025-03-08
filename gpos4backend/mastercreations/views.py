@@ -40,3 +40,7 @@ class OwnerManageView(APIView):
             'message': 'Owner created successfully',
         }
         return Response(x, status=201)
+    
+class BusniessCreateViewApi(APIView):
+    def post(self, request):
+        pass
