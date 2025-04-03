@@ -107,8 +107,8 @@ class CashHandover(models.Model):
 class ModeOfPayment(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
     mop_name = models.CharField(max_length=100, blank=False, null=False)
-    mop_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False, related_name='mop_mop_account_id')
-    mop_commission_rate = models.DecimalField(max_digits=100, decimal_places=2, blank=False, null=False) # Commission charged by the bank/paymemnt aggregrator like 1.5%
+    mop_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False, related_name='mop_mop_account_id') #One of the MOPs should be 'round-off'. & 'Credit Notes'
+    mop_commission_rate = models.DecimalField(max_digits=100, decimal_places=3, blank=False, null=False) # Commission charged by the bank/paymemnt aggregrator like 1.5%
     mop_commission_ledger = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False, related_name='mop_mop_commission_ledger')
     # HandoverDateTime = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False)

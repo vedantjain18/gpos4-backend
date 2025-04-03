@@ -4,28 +4,13 @@ from mastercreations.models import *
 from main.models import *
 
 # Create your models here.
-class StockRegister(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    # osid = models.CharField(blank=False, null=False, max_length=10)
-    # itemname = models.CharField(max_length=255)
-    item_id = models.BigIntegerField(blank=False, null=False,)
-    item_qty = models.IntegerField(blank=False, null=False, default=0)  # Set default value to 0
-    item_pur_rate = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2, default=0)  # Set default value to 0
-    item_mrp = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2, default=0)  # Set default value to 0
-    item_sale_rate = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2, default=0)  # Set default value to 0
-    item_barcode = models.BigIntegerField(blank=False, null=False,)  # Set default value to 0
-    child_barcode = models.BigIntegerField(blank=False, null=False,)
-    loc_id = models.CharField(blank=False, null=False, max_length=10)
-
-    def __str__(self):
-        return self.item_id
 
 class ItemType(models.Model): # Refer to UQC Codes from tally screenshots & redefine this class
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     item_type_symbol = models.CharField(max_length=255) # Like Loose (LSE), Pieces (PCS), Hybrid (HYD), etc.
     about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -36,7 +21,7 @@ class ItemUnit(models.Model):
     name = models.CharField(max_length=255)
     item_unit_symbol = models.CharField(max_length=255)
     item_unit_convert_to_grams = models.CharField(max_length=255)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -47,7 +32,7 @@ class Company(models.Model):
     name = models.CharField(max_length=255)
     about = models.CharField(max_length=355, null=True)
     base_margin_company = models.DecimalField(max_digits=10, blank=False, null=False, decimal_places=3, default=0)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -59,7 +44,7 @@ class ItemBrand(models.Model):
     about = models.CharField(max_length=355, null=True)
     base_margin_brand = models.DecimalField(max_digits=10, blank=False, null=False, decimal_places=3, default=0)
     company_id=models.ForeignKey(Company, on_delete=models.CASCADE)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -69,7 +54,7 @@ class ItemCategory(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -80,7 +65,7 @@ class ItemGroup(models.Model):
     name = models.CharField(max_length=255)
     item_category_id = models.ForeignKey(ItemCategory, on_delete=models.CASCADE) # how do i make this 2D? so that i can accommodate multiple itemGroups inside a single itemCategory
     about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -91,7 +76,7 @@ class ItemSubGroup(models.Model):
     name = models.CharField(max_length=255)
     item_group_id = models.ForeignKey(ItemGroup, on_delete=models.CASCADE) # how do i make this 2D? 
     about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -122,24 +107,40 @@ class ItemMaster(models.Model):
     # itembarcode2 = models.CharField(max_length=50, blank=True, null=True)
     # itembarcode3 = models.CharField(max_length=50,blank=True, null=True)
     # itembrand = models.ForeignKey(Brand,on_delete=models.CASCADE,blank=True, null=True,)
-    # itemcompany = models.ForeignKey(Company,on_delete=models.CASCADE,blank=True, null=True,)
-    # Attributes= models.ForeignKey(Attribute,on_delete=models.CASCADE,blank=True, null=True,)
-    # Attributes_options= models.ForeignKey(Attribute_options,on_delete=models.CASCADE,blank=True, null=True,)
+    # itemcompany = models.ForeignKey(Company,on_delete=models.CASCADE,blank=True, null=True)
+    # Attributes= models.ForeignKey(Attribute,on_delete=models.CASCADE,blank=True, null=True)
+    # Attributes_options= models.ForeignKey(Attribute_options,on_delete=models.CASCADE,blank=True, null=True)
 
     def __str__(self):
         return self.item_name
+
+class StockRegister(models.Model):
+    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    # osid = models.CharField(blank=False, null=False, max_length=10)
+    # itemname = models.CharField(max_length=255)
+    item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE, blank=False, null=False)
+    item_qty = models.IntegerField(blank=False, null=False, default=0)  # Set default value to 0
+    item_pur_rate = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2, default=0)  # Set default value to 0
+    item_mrp = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2, default=0)  # Set default value to 0
+    item_sale_rate = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2, default=0)  # Set default value to 0
+    item_barcode = models.BigIntegerField(blank=False, null=False,)  # Set default value to 0
+    child_barcode = models.BigIntegerField(blank=False, null=False,)
+    loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE, blank=False, null=False)
+
+    def __str__(self):
+        return self.item_id
     
 class OpeningStock(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     financial_year = models.CharField(blank=False, null=False, max_length=10)
-    loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE, blank=False, null=False)
+    item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE, blank=False, null=False)
     child_barcode = models.CharField(blank=False, null=False, max_length=50)
     item_mrp = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     item_pur_rate = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     item_sale_rate = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     item_qty = models.IntegerField(blank=False, null=False)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -151,7 +152,7 @@ class ItemIngredientsMaster(models.Model):
     ingredient_description = models.CharField(blank=False, null=False, max_length=500)
     ingredient_is_red_dot = models.CharField(blank=False, null=False, max_length=500)
     ingredient_health_hazard_level = models.CharField(blank=False, null=False, max_length=500) # On a scale of 1-5; 5 being the worst for health
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
@@ -169,7 +170,7 @@ class PhysicalStockTakingPending(models.Model):
     item_child_mrp = models.DecimalField(max_digits=10, decimal_places=2)
     item_child_qty = models.DecimalField(max_digits=10, decimal_places=2)
     item_tax_id = models.ForeignKey(ItemTaxMaster, on_delete=models.CASCADE)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True) # no separate register for this, all updation will take place inside StockRegister & StockManipulation (under manipulation id = 'stock adjustment' or physical stock taking)
 
     def __str__(self):
@@ -179,7 +180,7 @@ class StockManipulationType(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     stock_manipulation_type = models.CharField(max_length=255) #Production, Consumption, Damage, Spoilage, Stock Adjustment, e, Stock Transfer, Stock Conversion, Stock Correction, Stock Write Off, Stock Write On, Theft
     stock_manipulation_operator = models.CharField(max_length=100, blank=False, null=False) # (+1) or (-1)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -201,7 +202,7 @@ class StockManipulation(models.Model):
     # item_row_total = models.DecimalField(max_digits=10, decimal_places=2)
     # employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
     stock_manipulation_date_time = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -223,7 +224,7 @@ class PriceTagsPrinting(models.Model):
     item_row_total = models.DecimalField(max_digits=10, decimal_places=2)
     #employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE)
     price_tag_printing_date_time = models.DateTimeField(auto_now_add=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -233,7 +234,7 @@ class ItemBarcode(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE, unique=False)
     item_barcode = models.CharField(max_length=255, unique=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

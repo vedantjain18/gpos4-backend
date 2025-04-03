@@ -43,10 +43,27 @@ class BusinessMaster(models.Model):
 
     def __str__(self):
         return self.businessname
+
+class LocationType(models.Model):
+    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)  # Assuming you have a Business model
+    location_type_name = models.CharField(max_length=255, blank=False, null=False) #Defaults -> Warehouse/Godown, SalePoint, Store, Office, Manufacturing Facility, Temporary Storage, etc
+    purpose = models.CharField(max_length=750, blank=False, null=False)
+    is_sale_permitted = models.BooleanField(default=False)
+    is_purchase_permitted = models.BooleanField(default=False)
+    is_stock_permitted = models.BooleanField(default=False)
+    is_production_permitted = models.BooleanField(default=False)
+    employee_limit = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=False, null=False)
+    created_by = models.CharField(max_length=100) # How do i put in employee id here?
+
+    def __str__(self):
+        return self.name
     
 class LocationMaster(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)  # Assuming you have a Business model
     name = models.CharField(max_length=255, blank=False, null=False)
+    location_type_id = models.ForeignKey(LocationType, on_delete=models.CASCADE, blank=False, null=False)
     email = models.EmailField()
     phone = models.CharField(max_length=20, blank=False, null=False)
     whatsapp = models.CharField(max_length=20, blank=True, null=True)
@@ -58,7 +75,6 @@ class LocationMaster(models.Model):
     pan = models.CharField(max_length=20, blank=True, null=True)
     gstin = models.CharField(max_length=20, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True, blank=False, null=False)
-    updated_at = models.DateTimeField(auto_now=True, blank=False, null=False)
 
     def __str__(self):
         return self.name

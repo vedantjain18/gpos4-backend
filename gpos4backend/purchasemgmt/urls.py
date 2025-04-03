@@ -1,8 +1,12 @@
 from django.urls import path
-from .views import home, PurchaseRegisterApi
+from .views import home, PurchaseInvoiceRegisterApi, PurchaseInvoicePendingApi, PurchaseOrderRegisterApi, PurchaseChallanRegisterApi
 
 urlpatterns = [
     path('', home, name='home'),
-    path('api/purchase-register-all/', PurchaseRegisterApi.as_view(), name='purchase-register-all'),
+    path('purchase-invoice-register/', PurchaseInvoiceRegisterApi.as_view(), name='purchase-invoice-register'),
+    path('purchase-invoice-pending/', PurchaseInvoicePendingApi.as_view(), name='purchase-invoice-pending'),
+    path('purchase-order-register/', PurchaseOrderRegisterApi.as_view(), name='purchase-order-register'),
+    path('purchase-challan-register/', PurchaseChallanRegisterApi.as_view(), name='purchase-challan-register'),
+
 
 ]

@@ -41,7 +41,7 @@ class ItemHSN(models.Model):
         return f"{self.itemhsn}"
 
 class CentralDataHSN(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE) # [can keep it as '0']
+    # business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE) # [can keep it as '0']
     item_hsn = models.CharField(max_length=255, unique=True)
     item_hsn_desc = models.CharField(max_length=255)
     item_hsn_type = models.CharField(max_length=255) # HSN Or SAC
@@ -52,7 +52,7 @@ class CentralDataHSN(models.Model):
         return self.itemhsn
 
 class CentralDataPincode(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE) # [can keep it as '0']
+    # business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE) # [can keep it as '0']
     pincode = models.CharField(max_length=10, unique=True)
     city = models.CharField(max_length=255)
     district = models.CharField(max_length=255)
@@ -64,7 +64,7 @@ class CentralDataPincode(models.Model):
         return self.pincode
     
 class CentralDataCurrency(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False) # [can keep it as '0' for Central Data]
+    # business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False) # [can keep it as '0' for Central Data]
     currency_name = models.CharField(max_length=255, blank=False, null=False)
     currency_symbol = models.CharField(max_length=255, blank=False, null=False)
     currency_country = models.CharField(max_length=255, blank=False, null=False)
@@ -77,7 +77,7 @@ class CentralDataCurrency(models.Model):
         return self.currency_code
 
 class CentralDataIngredients(models.Model):
-    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    # business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     ingredient_name = models.CharField(max_length=500, blank=False, null=False)
     ingredient_description = models.CharField(blank=False, null=False, max_length=500)
     ingredient_is_red_dot = models.CharField(blank=False, null=False, max_length=500)
@@ -87,3 +87,17 @@ class CentralDataIngredients(models.Model):
     def __str__(self):
         return self.ingredient_name
 
+class CentralDataLocationType(models.Model):
+    # business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    location_type_name = models.CharField(max_length=255, blank=False, null=False) #Defaults -> Warehouse/Godown, SalePoint, Store, Office, Manufacturing Facility, Temporary Storage, etc
+    purpose = models.CharField(max_length=750, blank=False, null=False)
+    is_sale_permitted = models.BooleanField(default=False)
+    is_purchase_permitted = models.BooleanField(default=False)
+    is_stock_permitted = models.BooleanField(default=False)
+    is_production_permitted = models.BooleanField(default=False)
+    employee_limit = models.PositiveIntegerField(default=0)
+    is_active = models.BooleanField(default=True)# On a scale of 1-5; 5 being the worst for health
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+        return self.location_type_name
