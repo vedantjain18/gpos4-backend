@@ -22,6 +22,7 @@ class StockRegisterAllApi(APIView):
         }
         return Response(response, status=status.HTTP_200_OK)
 
+
 class PhysicalStockTakingPendingApi(APIView):
     def get(self, request):
         business_id = request.GET.get("business_id")
