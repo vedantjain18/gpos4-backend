@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import SalesBillPending, SalesReturnBillPending, SalesRegister, SalesTransactionDetails, SalesQuotationPending, SalesOrderPending, SalesReturnsTransactionDetails, OrderTransactionDetails, QuotationTransactionDetails, OrderRegister, QuotationRegister
+from .models import SalesBillPending, SalesReturnBillPending, SalesRegister, SalesQuotationPending, SalesOrderPending, SalesReturnRegister, SalesOrderRegisterDetails, SalesQuotationRegisterDetails, SalesOrderRegister, SalesQuotationRegister
 from inventorymgmt.models import ItemMaster, ItemBarcode
 from accounts.models import CashHandover
 
@@ -23,9 +23,9 @@ class SalesRegisterSerializer(serializers.ModelSerializer):
         model = SalesRegister
         fields = '__all__'
 
-class SalesTransactionDetailsSerializer(serializers.ModelSerializer):
+class SalesRegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SalesTransactionDetails
+        model = SalesRegister
         fields = '__all__'
 
 class SalesQuotationPendingSerializer(serializers.ModelSerializer):
@@ -38,9 +38,9 @@ class SalesOrderPendingSerializer(serializers.ModelSerializer):
         model = SalesOrderPending
         fields = '__all__'
 
-class SalesReturnsTransactionDetailsSerializer(serializers.ModelSerializer):
+class SalesReturnRegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = SalesReturnsTransactionDetails
+        model = SalesReturnRegister
         fields = '__all__'
 
 class CashHandoverSerializer(serializers.ModelSerializer):
@@ -48,24 +48,24 @@ class CashHandoverSerializer(serializers.ModelSerializer):
         model = CashHandover
         fields = '__all__'
 
-class OrderRegisterSerializer(serializers.ModelSerializer):
+class SalesOrderRegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = OrderRegister
+        model = SalesOrderRegister
         fields = '__all__'
 
-class QuotationRegisterSerializer(serializers.ModelSerializer):
+class SalesQuotationRegisterSerializer(serializers.ModelSerializer):
     class Meta:
-        model = QuotationRegister
+        model = SalesQuotationRegister
         fields = '__all__'
 
-class QuotationTransactionDetailsSerializer(serializers.ModelSerializer):
+class SalesQuotationRegisterDetailsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = QuotationTransactionDetails
+        model = SalesQuotationRegisterDetails
         fields = '__all__'
 
-class OrderTransactionDetailsSerializer(serializers.ModelSerializer):
+class SalesOrderRegisterDetailsSerializer(serializers.ModelSerializer):
     class Meta:
-        model = OrderTransactionDetails
+        model = SalesOrderRegisterDetails
         fields = '__all__'
 
 class ItemBarcodeSerializer(serializers.ModelSerializer):

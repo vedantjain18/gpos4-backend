@@ -7,6 +7,7 @@ from main.models import *
 
 class NatureOfGroup(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    nog_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz NatureOfGroup_id will not be serially assigned to every different business]
     nog_name = models.CharField(max_length=100, blank=False, null=False) # Assets, Expenses, Liabilities & Income
     nog_symbol = models.CharField(max_length=100, blank=False, null=False)
     nog_operator = models.CharField(max_length=100, blank=False, null=False) # (+) or (-)
@@ -18,7 +19,8 @@ class NatureOfGroup(models.Model):
 
 class AccountsGroup(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    acc_grp_name = models.CharField(max_length=100, blank=False, null=False) # Assets, Expenses, Liabilities & Income
+    acc_grp_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz AccountsGroup_id will not be serially assigned to every different business]
+    acc_grp_name = models.CharField(max_length=100, blank=False, null=False)  # Salary, Fixed Assets, Current Assets, Current Liabilities, Sundry Creditors, Sundry Debtors, etc
     nature_of_group_id = models.ForeignKey(NatureOfGroup, on_delete=models.CASCADE,  blank=False, null=False)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
@@ -29,6 +31,7 @@ class AccountsGroup(models.Model):
 class AccountsMaster(models.Model):
     business_id = models.ForeignKey(BusinessMaster,on_delete=models.CASCADE,blank=False, null=False,)
     # accid = models.IntegerField(null=False, blank=False) [Will be automatically added by Django]
+    accounts_master_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz AccountsMaster_id will not be serially assigned to every different business]
     acc_name = models.CharField(null=False, blank=False, max_length=120)
     accounts_group_id = models.ForeignKey(AccountsGroup, on_delete=models.CASCADE,  blank=False, null=False)
     acc_bill_wise = models.BooleanField(null=True, blank=False)
@@ -53,7 +56,8 @@ class AccountsMaster(models.Model):
     
 class VoucherType(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    location_master_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    voucher_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz VoucherType_id will not be serially assigned to every different business]
+    # location_master_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
     vchr_name = models.CharField(max_length=100, blank=False, null=False) # Sales, SR, Purchase, PR, Receipt, Payment, Journal, Contra
     voucher_symbol = models.CharField(max_length=255)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False)
@@ -65,7 +69,7 @@ class VoucherType(models.Model):
 class AccountsVoucherEntry(models.Model):
     business_id= models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
     location_master_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    voucher_number = models.CharField(max_length=100,  blank=True, null=True) # only put numbers here. voucher type will be determined by VoucherType_id
+    accounts_voucher_entry_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz AccountsVoucherEntry_id will not be serially assigned to every different business] # only put numbers here. voucher type will be determined by VoucherType_id
     voucher_type_id = models.ForeignKey(VoucherType, on_delete=models.CASCADE , null=False, blank=False)
     voucher_entry_date = models.DateField(max_length=100,  blank=False, null=False)
     voucher_entry_time = models.TimeField(max_length=100,  blank=False, null=False)
@@ -85,6 +89,7 @@ class AccountsVoucherEntry(models.Model):
 
 class CashHandover(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    cash_handover_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz CashHandover_id will not be serially assigned to every different business]
     handover_date_time = models.DateTimeField(auto_now_add=True)
     #employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False) # separate from created_by coz, a manager might do an entry of cash hanndover on behalf of an employee
     location_master_id =  models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
@@ -106,6 +111,7 @@ class CashHandover(models.Model):
     
 class ModeOfPayment(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    mop_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ModeOfPayment_id will not be serially assigned to every different business]
     mop_name = models.CharField(max_length=100, blank=False, null=False)
     mop_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False, related_name='mop_mop_account_id') #One of the MOPs should be 'round-off'. & 'Credit Notes'
     mop_commission_rate = models.DecimalField(max_digits=100, decimal_places=3, blank=False, null=False) # Commission charged by the bank/paymemnt aggregrator like 1.5%
@@ -138,6 +144,7 @@ class AccountsLedgerPending(models.Model):
     
 class OpeningAccounts(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    opening_accounts_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz OpeningAccounts_id will not be serially assigned to every different business]
     financial_year = models.CharField(blank=False, null=False, max_length=10)
     # locid = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False) # 0 if the location is invalid
     accounts_master_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False)

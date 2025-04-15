@@ -6,6 +6,7 @@ from mastercreations.models import *
 class CustomerMaster(models.Model):
     business_id = models.ForeignKey(BusinessMaster,on_delete=models.CASCADE,blank=False, null=False,)
     # accid = models.IntegerField(null=False, blank=False) [Will be automatically added by Django]
+    customer_master_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz CustomerMaster_id will not be serially assigned to every different business]
     customer_name = models.CharField(null=False, blank=False, max_length=120)
     customer_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False)
     customer_phone = models.IntegerField(null=True, blank=True)

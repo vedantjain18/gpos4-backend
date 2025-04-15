@@ -8,6 +8,7 @@ from accounts.models import *
 # Create your models here.
 class PurchaseInvoiceRegister(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    purchase_invoice_register_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz PurchaseInvoiceRegister_id will not be serially assigned to every different business]
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     financial_year = models.CharField(blank=False, null=False, max_length=50)
     purchase_invoice_no = models.CharField(max_length=50)
@@ -70,6 +71,7 @@ class PurchaseInvoicePending(models.Model):
 
 class PurchaseOrderRegister(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    purchase_order_register_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz PurchaseOrderRegister_id will not be serially assigned to every different business]
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     financial_year = models.CharField(blank=False, null=False, max_length=50)
     purchase_order_no = models.CharField(max_length=50)
@@ -110,6 +112,7 @@ class PurchaseOrderRegisterDetails(models.Model):
     
 class PurchaseChallanRegister(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    purchase_challan_register_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz PurchaseChallanRegister_id will not be serially assigned to every different business]
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     financial_year = models.CharField(blank=False, null=False, max_length=50)
     purchase_challan_no = models.CharField(max_length=50)
@@ -150,6 +153,7 @@ class PurchaseChallanRegisterDetails(models.Model):
     
 class PurchaseReturnsRegister(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    purchase_return_register_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz PurchaseReturnsRegister_id will not be serially assigned to every different business]
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     financial_year = models.CharField(blank=False, null=False, max_length=50)
     purchase_returns_no = models.CharField(max_length=50)

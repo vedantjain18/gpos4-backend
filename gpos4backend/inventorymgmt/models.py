@@ -7,8 +7,10 @@ from main.models import *
 
 class ItemType(models.Model): # Refer to UQC Codes from tally screenshots & redefine this class
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemType_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
-    item_type_symbol = models.CharField(max_length=255) # Like Loose (LSE), Pieces (PCS), Hybrid (HYD), etc.
+    item_type_uqc_code = models.CharField(max_length=255) # Like Loose (LSE), Pieces (PCS), Hybrid (HYD), etc.
+    item_type_quantity_type = models.CharField(max_length=255) # Like Weight, Volume, Count, etc.
     about = models.CharField(max_length=355, null=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
@@ -18,9 +20,11 @@ class ItemType(models.Model): # Refer to UQC Codes from tally screenshots & rede
     
 class ItemUnit(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_unit_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemUnit_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
     item_unit_symbol = models.CharField(max_length=255)
     item_unit_convert_to_grams = models.CharField(max_length=255)
+    about = models.CharField(max_length=355, null=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -29,9 +33,10 @@ class ItemUnit(models.Model):
 
 class Company(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    company_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz Company_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
     about = models.CharField(max_length=355, null=True)
-    base_margin_company = models.DecimalField(max_digits=10, blank=False, null=False, decimal_places=3, default=0)
+    company_base_margin = models.DecimalField(max_digits=10, blank=False, null=False, decimal_places=3, default=0)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -40,9 +45,10 @@ class Company(models.Model):
     
 class ItemBrand(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_brand_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemBrand_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
     about = models.CharField(max_length=355, null=True)
-    base_margin_brand = models.DecimalField(max_digits=10, blank=False, null=False, decimal_places=3, default=0)
+    item_brand_base_margin = models.DecimalField(max_digits=10, blank=False, null=False, decimal_places=3, default=0)
     company_id=models.ForeignKey(Company, on_delete=models.CASCADE)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
@@ -52,6 +58,7 @@ class ItemBrand(models.Model):
 
 class ItemCategory(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_category_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemCategory_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
     about = models.CharField(max_length=355, null=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
@@ -62,6 +69,7 @@ class ItemCategory(models.Model):
     
 class ItemGroup(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_group_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemGroup_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
     item_category_id = models.ForeignKey(ItemCategory, on_delete=models.CASCADE) # how do i make this 2D? so that i can accommodate multiple itemGroups inside a single itemCategory
     about = models.CharField(max_length=355, null=True)
@@ -73,6 +81,7 @@ class ItemGroup(models.Model):
     
 class ItemSubGroup(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_sub_group_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemSubGroup_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
     item_group_id = models.ForeignKey(ItemGroup, on_delete=models.CASCADE) # how do i make this 2D? 
     about = models.CharField(max_length=355, null=True)
@@ -84,18 +93,21 @@ class ItemSubGroup(models.Model):
     
 class ItemMaster(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_master_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemMaster_id will not be serially assigned to every different business]
     # itemid = models.BigIntegerField(primary_key=True)
     item_name = models.CharField(max_length=255)
     item_print_name = models.CharField(max_length=255)
+    item_alias = models.CharField(max_length=255)
     item_unit_id = models.ForeignKey(ItemUnit, on_delete=models.CASCADE)
+    item_size = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2, default=0)
     item_category_id = models.ForeignKey(ItemCategory, on_delete=models.CASCADE) # Make it 2D, in order for it to be visible in multiple Categories
-    item_group_id = models.ForeignKey(ItemGroup, on_delete=models.CASCADE) 
-    # item_group2_id = models.ManyToManyField(ItemGroup, on_delete=models.CASCADE)# Make it 2D, in order for it to be visible in multiple Categories
+    item_group_id = models.ForeignKey(ItemGroup, on_delete=models.CASCADE)
+    # item_group2_id = models.ManyToManyField(ItemGroup, on_delete=models.CASCADE) # Make it 2D, in order for it to be visible in multiple Categories
     item_sub_group_id = models.ForeignKey(ItemSubGroup, on_delete=models.CASCADE) # Make it 2D, in order for it to be visible in multiple Categories
     item_tax_master_id =models.ForeignKey(ItemTaxMaster, on_delete=models.CASCADE)
     item_hsn_id = models.ForeignKey(ItemHSN, on_delete=models.CASCADE)
     # itemmrp = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
-    item_master_product_id = models.CharField(max_length=50, blank=True, null=True)
+    item_master_product_code = models.CharField(max_length=50, blank=True, null=True) #Enter master product code
     item_case_size = models.CharField(max_length=50, blank=True, null=True)
     item_shell = models.CharField(max_length=50, blank=True, null=True)
     item_type_id = models.ForeignKey(ItemType, on_delete=models.CASCADE)
@@ -116,6 +128,7 @@ class ItemMaster(models.Model):
 
 class StockRegister(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    stock_register_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz StockRegister_id will not be serially assigned to every different business]
     # osid = models.CharField(blank=False, null=False, max_length=10)
     # itemname = models.CharField(max_length=255)
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE, blank=False, null=False)
@@ -132,6 +145,7 @@ class StockRegister(models.Model):
     
 class OpeningStock(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    opening_stock_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz OpeningStock_id will not be serially assigned to every different business]
     financial_year = models.CharField(blank=False, null=False, max_length=10)
     loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE, blank=False, null=False)
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE, blank=False, null=False)
@@ -148,6 +162,7 @@ class OpeningStock(models.Model):
     
 class ItemIngredientsMaster(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_ingredients_master_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemIngredientsMaster_id will not be serially assigned to every different business]
     ingredient_name = models.CharField(blank=False, null=False, max_length=500)
     ingredient_description = models.CharField(blank=False, null=False, max_length=500)
     ingredient_is_red_dot = models.CharField(blank=False, null=False, max_length=500)
@@ -178,6 +193,7 @@ class PhysicalStockTakingPending(models.Model):
     
 class StockManipulationType(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    stock_manipulation_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz StockManipulationType_id will not be serially assigned to every different business]
     stock_manipulation_type = models.CharField(max_length=255) #Production, Consumption, Damage, Spoilage, Stock Adjustment, e, Stock Transfer, Stock Conversion, Stock Correction, Stock Write Off, Stock Write On, Theft
     stock_manipulation_operator = models.CharField(max_length=100, blank=False, null=False) # (+1) or (-1)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
@@ -188,6 +204,7 @@ class StockManipulationType(models.Model):
     
 class StockManipulation(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    stock_manipulation_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz StockManipulation_id will not be serially assigned to every different business]
     loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     stock_manipulation_type_id = models.ForeignKey(StockManipulationType, on_delete=models.CASCADE)
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE)
@@ -210,6 +227,7 @@ class StockManipulation(models.Model):
     
 class PriceTagsPrinting(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    price_tags_printing_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz PriceTagsPrinting_id will not be serially assigned to every different business]
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE)
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE)
     item_barcode = models.CharField(max_length=50)
@@ -232,6 +250,7 @@ class PriceTagsPrinting(models.Model):
     
 class ItemBarcode(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    item_barcode_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemBarcode_id will not be serially assigned to every different business]
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE, unique=False)
     item_barcode = models.CharField(max_length=255, unique=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?

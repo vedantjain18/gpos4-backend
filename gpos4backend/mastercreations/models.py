@@ -23,6 +23,7 @@ class OwnerMaster(models.Model):
     
 class BusinessMaster(models.Model):
     owner_id = models.ForeignKey(OwnerMaster, on_delete=models.CASCADE)
+    business_master_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz BusinessMaster_id will not be serially assigned to every different owner]
     business_name = models.CharField(max_length=15, blank=False)
     email = models.EmailField(unique=True, blank=False, null=False)
     mobile = models.CharField(max_length=15, blank=False, null=False)
@@ -46,6 +47,7 @@ class BusinessMaster(models.Model):
 
 class LocationType(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)  # Assuming you have a Business model
+    location_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz LocationType_id will not be serially assigned to every different business]
     location_type_name = models.CharField(max_length=255, blank=False, null=False) #Defaults -> Warehouse/Godown, SalePoint, Store, Office, Manufacturing Facility, Temporary Storage, etc
     purpose = models.CharField(max_length=750, blank=False, null=False)
     is_sale_permitted = models.BooleanField(default=False)
@@ -62,6 +64,7 @@ class LocationType(models.Model):
     
 class LocationMaster(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)  # Assuming you have a Business model
+    location_master_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz LocationMaster_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255, blank=False, null=False)
     location_type_id = models.ForeignKey(LocationType, on_delete=models.CASCADE, blank=False, null=False)
     email = models.EmailField()
@@ -70,6 +73,7 @@ class LocationMaster(models.Model):
     address = models.TextField(blank=False, null=False)
     city = models.CharField(max_length=100, blank=False, null=False)
     pin = models.CharField(max_length=10, blank=False, null=False)
+    district = models.CharField(max_length=100, blank=False, null=False)
     state = models.CharField(max_length=100, blank=False, null=False)
     country = models.CharField(max_length=100, blank=False, null=False)
     pan = models.CharField(max_length=20, blank=True, null=True)
@@ -82,11 +86,13 @@ class LocationMaster(models.Model):
 class EmployeeMaster(models.Model):
     #group = models.ForeignKey(Group, default=None , on_delete=models.CASCADE)
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    employee_master_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz EmployeeMaster_id will not be serially assigned to every different business]
     first_name = models.CharField(max_length=100)
     middle_name = models.CharField(max_length=100, blank=True, null=True)
     last_name = models.CharField(max_length=100)
     mobile = models.CharField(max_length=20)
     whatsapp = models.CharField(max_length=20, blank=True, null=True)
+    email = models.EmailField()
     # age = models.PositiveIntegerField()
     date_of_birth = models.CharField(max_length=10)  # Changed to CharField
     gender = models.CharField(max_length=1)
