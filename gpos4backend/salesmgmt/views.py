@@ -4,7 +4,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from .models import SalesBillPending, SalesReturnBillPending, SalesOrderPending, SalesQuotationPending, SalesReturnRegister, SalesOrderRegister, SalesQuotationRegister, SalesRegister
+from .models import SalesBillPending, SalesReturnBillPending, SalesOrderPending, SalesQuotationPending, SalesReturnRegister, SalesOrderRegister, SalesQuotationRegister, SalesRegister, SalesRegisterDetails, SalesReturnRegisterDetails
 from .serializers import ItemMasterSerializer, SalesBillPendingSerializer, SalesReturnBillPendingSerializer, SalesRegisterSerializer, SalesOrderPendingSerializer, SalesQuotationPendingSerializer, SalesReturnRegisterSerializer, CashHandoverSerializer, SalesOrderRegisterSerializer, SalesQuotationRegisterSerializer, ItemBarcodeSerializer
 from inventorymgmt.models import ItemMaster, ItemBarcode
 from accounts.models import CashHandover
@@ -67,6 +67,21 @@ class SalesRegisterApi(APIView):
         start_date = request.GET.get("from_date")
         end_date = request.GET.get("till_date")
         result = SalesRegister.objects.filter(business_id=business_idx, sale_date_time__gte=start_date, sale_date_time__lte=end_date)
+        response = {
+            'success': True,
+            'status_code': status.HTTP_200_OK,
+            'data': SalesRegisterSerializer(result, many=True).data,
+        }
+        return Response(response, status=status.HTTP_200_OK)
+    
+class SalesRegisterDetailsApi(APIView):
+    def get(self, request):
+        business_idx = request.GET.get("business_id")
+        sales_register_id = request.GET.get("sales_register_id")
+        # employee_master_id = request.GET.get("employee_master_id")
+        start_date = request.GET.get("from_date")
+        end_date = request.GET.get("till_date")
+        result = SalesRegisterDetails.objects.filter(business_id=business_idx, sales_register_id=sales_register_id, sale_date_time__gte=start_date, sale_date_time__lte=end_date)
         response = {
             'success': True,
             'status_code': status.HTTP_200_OK,

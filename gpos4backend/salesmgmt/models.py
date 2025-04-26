@@ -7,6 +7,27 @@ from accounts.models import *
 from customermgmt.models import *
 
 # Create your models here.
+
+class SalesType(models.Model):
+    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)
+    sales_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz SalesType_id will not be serially assigned to every different business]
+    sales_type_name = models.CharField(max_length=255, blank=False, null=False) #Defaults -> Counter, Delivery, Takeaway/Pickup, D2C etc
+    sales_type_symbol = models.CharField(max_length=255, blank=False, null=False) #Defaults -> CTR, DLV, TAW/PCK, D2C, etc
+    purpose = models.CharField(max_length=750, blank=False, null=False)
+
+    def __str__(self):
+        return self.sales_type_name
+    
+class SalesReturnType(models.Model):
+    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)
+    sales_return_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz SalesReturnType_id will not be serially assigned to every different business]
+    sales_return_type_name = models.CharField(max_length=255, blank=False, null=False) #Defaults -> Counter, Delivery, Takeaway/Pickup, D2C etc
+    sales_return_type_symbol = models.CharField(max_length=255, blank=False, null=False) #Defaults -> CTR, DLV, TAW/PCK, D2C, etc
+    purpose = models.CharField(max_length=750, blank=False, null=False)
+
+    def __str__(self):
+        return self.sales_return_type_name
+    
 class SalesBillPending(models.Model):
     business = models.ForeignKey(BusinessMaster,on_delete=models.CASCADE, blank=False, null=False)
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE, blank=False, null=False)
@@ -50,17 +71,19 @@ class SalesReturnBillPending(models.Model):
         return self.item_child_barcode
     
 class SalesRegister(models.Model):
-    business_id = models.ForeignKey(BusinessMaster,on_delete=models.CASCADE,blank=False, null=False)
+    business_id = models.ForeignKey(BusinessMaster,on_delete=models.CASCADE, blank=False, null=False)
     sales_register_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz SalesRegister_id will not be serially assigned to every different business]
-    location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE, blank=False, null=False)
     financial_year = models.CharField(blank=False, null=False, max_length=50)
+    sales_type_id = models.ForeignKey(SalesType, on_delete=models.CASCADE, blank=False, null=False) #  CTR, DLV, TAW/PCK, D2C, etc
     bill_num = models.CharField(blank=False, null=False, max_length=50, unique=True)
-    customer_master_id = models.ForeignKey(CustomerMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    customer_master_id = models.ForeignKey(CustomerMaster, on_delete=models.CASCADE, blank=False, null=False)
     sale_date_time = models.DateTimeField(auto_now_add=True) # sale_date_time & created_at both are required in case of date changed bill creation
     bill_total = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2) # keeping this for now for fast calculations & to insert under 'payment modes'
     other_charges = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     other_discounts = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     total_amount = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
+    isSalesLifeCycleComplete = models.BooleanField(default=True) #This is required in the following scenario: If a delivery bill is created, but the delivery is not done i.e payment is not received, then the mop will be staying in "PENDING" mode, which will not allow the employee to do the handover. Then the employee will create a salesReturn voucher & this value will be made = 'True'
     #employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, related_name='std_employee_master_id') # emp_id and created_by both are required in case the manager is creating a bill on behalf of an eployee
     comments = models.TextField(blank=True, null=True) # In case of any comments from the customer
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE) # How do i put in employee id here?
@@ -90,19 +113,46 @@ class SalesRegisterDetails(models.Model):
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
+    @property
+    def set_item_row_total(self):
+        self.item_row_total = self.item_sale_rate * self.item_qty
+        # return self.item_row_total
+    
     def __str__(self):
         return self.item_child_barcode
     
+class SalesRegisterSatusControl(models.Model): #A part of Order Delivery system
+    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)
+    status_control_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz SalesRegisterSatusControl_id will not be serially assigned to every different business]
+    sales_register_id = models.ForeignKey(SalesRegister, on_delete=models.CASCADE, blank=False, null=False)
+    is_order_received = models.BooleanField(default=False)
+    is_order_received_timestamp = models.DateTimeField(auto_now_add=True)
+    is_order_packed = models.BooleanField(default=False)
+    is_order_packed_timestamp = models.DateTimeField(auto_now_add=True)
+    is_order_dispatched = models.BooleanField(default=False)
+    is_order_dispatched_timestamp = models.DateTimeField(auto_now_add=True)
+    customer_otp = models.CharField(blank=False, null=False, max_length=50) # OTP sent to customer via SMS/Email/WhatsApp will be this value.
+    is_order_delivered = models.BooleanField(default=False)
+    is_order_delivered_timestamp = models.DateTimeField(auto_now_add=True)
+    customer_signature = models.ImageField(upload_to='customer_signatures/', blank=True, null=True) # Customer Signature taken by the delivery boy
+    is_payment_complete = models.BooleanField(default=False) #At this stage, change MOP details from 'PENDING' to the respective payment mode used by customer.
+    is_payment_complete_timestamp = models.DateTimeField(auto_now_add=True)
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE) # How do i put in employee id here?
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.customer_otp
+
 class SalesRegisterMOP(models.Model):
-    business_id = models.ForeignKey(BusinessMaster,on_delete=models.CASCADE,blank=False, null=False)
-    sales_register_id = models.ForeignKey(SalesRegister, on_delete=models.CASCADE,  blank=False, null=False)
+    business_id = models.ForeignKey(BusinessMaster,on_delete=models.CASCADE, blank=False, null=False)
+    sales_register_id = models.ForeignKey(SalesRegister, on_delete=models.CASCADE, blank=False, null=False)
     # location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False) #May be excluded, but keeping it will ease reporting like location wise mop or year wise mop trends
     # financial_year = models.CharField(blank=False, null=False, max_length=50) #May be excluded, but keeping it will ease reporting like location wise mop or year wise mop trends
     # bill_num = models.CharField(blank=False, null=False, max_length=50, unique=True)
     # total_amount = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     mop_id = models.ForeignKey(ModeOfPayment, on_delete=models.CASCADE,  blank=False, null=False) #One of the MOPs should be 'round-off' (Mandatory Field for every bill_num)
-    mop_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE,  blank=False, null=False) # This will be pulled via mop_id, but in case of credit bills, we need to input the respective customer's accounts_master_id
-    mop_id_amount = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
+    mop_account_id = models.ForeignKey(AccountsMaster, on_delete=models.CASCADE, blank=False, null=False) # This will be pulled via mop_id, but in case of credit bills, we need to input the respective customer's accounts_master_id
+    mop_id_amount = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2) #If mop_id = "PICKUP" >'0', then cash_handover will not be allowed for that employee.
     mop_amount_reference_no = models.CharField(blank=False, null=True, max_length=50) # In Case of Credit Card/UPI etc
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
@@ -115,6 +165,7 @@ class SalesReturnRegister(models.Model):
     sales_return_register_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz SalesReturnRegister_id will not be serially assigned to every different business]
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
     financial_year = models.CharField(blank=False, null=False, max_length=50)
+    sales_return_type_id = models.ForeignKey(SalesReturnType, on_delete=models.CASCADE, blank=False, null=True) #  CTR, DLV, TAW/PCK, D2C, etc.
     bill_num = models.CharField(blank=False, null=True, max_length=50) #May be null, if in case the employee doesn't want to mention the bill number
     return_bill_num = models.CharField(blank=False, null=False, max_length=50)
     customer_master_id = models.ForeignKey(CustomerMaster, on_delete=models.CASCADE,  blank=False, null=False)

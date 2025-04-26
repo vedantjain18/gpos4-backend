@@ -5,12 +5,12 @@ from main.models import *
 
 # Create your models here.
 
-class ItemType(models.Model): # Refer to UQC Codes from tally screenshots & redefine this class
+class ItemUnit(models.Model): # Refer to UQC Codes from tally screenshots & redefine this class
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    item_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemType_id will not be serially assigned to every different business]
+    item_unit_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemUnit_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
-    item_type_uqc_code = models.CharField(max_length=255) # Like Loose (LSE), Pieces (PCS), Hybrid (HYD), etc.
-    item_type_quantity_type = models.CharField(max_length=255) # Like Weight, Volume, Count, etc.
+    item_unit_uqc_code = models.CharField(max_length=255) 
+    item_unit_quantity_type = models.CharField(max_length=255) # Like Weight, Volume, Count, etc.
     about = models.CharField(max_length=355, null=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
@@ -18,12 +18,11 @@ class ItemType(models.Model): # Refer to UQC Codes from tally screenshots & rede
     def __str__(self):
         return self.name
     
-class ItemUnit(models.Model):
+class ItemType(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    item_unit_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemUnit_id will not be serially assigned to every different business]
+    item_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ItemType_id will not be serially assigned to every different business]
     name = models.CharField(max_length=255)
-    item_unit_symbol = models.CharField(max_length=255)
-    item_unit_convert_to_grams = models.CharField(max_length=255)
+    item_unit_symbol = models.CharField(max_length=255) # Like Loose (LSE), Pieces (PCS), Hybrid (HYD), etc.
     about = models.CharField(max_length=355, null=True)
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
@@ -104,7 +103,7 @@ class ItemMaster(models.Model):
     item_group_id = models.ForeignKey(ItemGroup, on_delete=models.CASCADE)
     # item_group2_id = models.ManyToManyField(ItemGroup, on_delete=models.CASCADE) # Make it 2D, in order for it to be visible in multiple Categories
     item_sub_group_id = models.ForeignKey(ItemSubGroup, on_delete=models.CASCADE) # Make it 2D, in order for it to be visible in multiple Categories
-    item_tax_master_id =models.ForeignKey(ItemTaxMaster, on_delete=models.CASCADE)
+    item_tax_container_id =models.ForeignKey(ItemTaxContainer, on_delete=models.CASCADE)
     item_hsn_id = models.ForeignKey(ItemHSN, on_delete=models.CASCADE)
     # itemmrp = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
     item_master_product_code = models.CharField(max_length=50, blank=True, null=True) #Enter master product code

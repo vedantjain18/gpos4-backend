@@ -4,13 +4,25 @@ from mastercreations.models import *
 # from inventorymgmt.models import *
 
 # Create your models here.
-class ItemTaxMaster(models.Model):
+class ItemTaxRates(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
     item_tax_symbol = models.CharField(max_length=255)
     item_tax_rate = models.DecimalField(max_digits=100, decimal_places=2, blank=False, null=False)
     about = models.CharField(max_length=355, null=True)
+    isActive = models.BooleanField(default=True) # True or False
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.name
+    
+class ItemTaxMaster(models.Model):
+    business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
+    name = models.CharField(max_length=255) #GST 5%, GST 12%, GST 18%, GST40%
+    item_tax_symbol = models.CharField(max_length=255)
+    about = models.CharField(max_length=355, null=True)
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -18,11 +30,12 @@ class ItemTaxMaster(models.Model):
     
 class ItemTaxContainer(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255) #5% -> 2.5 CGST + 2.5 SCGST
     item_tax_symbol = models.CharField(max_length=255)
-    item_tax_master_id = models.ForeignKey(ItemTaxMaster, on_delete=models.CASCADE) # how do i make this 2D? so that it may contain multiple tax masters like CGST2.5% + SGST2.5% UNDER GST 5%
+    item_tax_rates_id = models.ForeignKey(ItemTaxRates, on_delete=models.CASCADE) # how do i make this 2D? so that it may contain multiple tax masters like CGST2.5% + SGST2.5% UNDER GST 5%
+    item_tax_master_id = models.ForeignKey(ItemTaxMaster, on_delete=models.CASCADE)
     about = models.CharField(max_length=355, null=True)
-    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=False) # How do i put in employee id here?
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -38,7 +51,7 @@ class ItemHSN(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.itemhsn}"
+        return f"{self.item_hsn}"
     
 class CentralDataNatureOfGroup(models.Model):
     # business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
@@ -181,3 +194,37 @@ class CentralDataLocationType(models.Model):
     
     def __str__(self):
         return self.location_type_name
+    
+class CentralDataModeOfPayment(models.Model):
+    #business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE,  blank=False, null=False)
+    mop_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz ModeOfPayment_id will not be serially assigned to every different business]
+    mop_name = models.CharField(max_length=100, blank=False, null=False) #Cash, Credit Card, Debit Card, UPI, Cheque, Pending, etc
+    mop_account_id = models.CharField(max_length=100, blank=False, null=True) #One of the MOPs should be 'round-off'. & 'Credit Notes'
+    mop_commission_rate = models.DecimalField(max_digits=100, decimal_places=3, blank=False, null=True) # Commission charged by the bank/paymemnt aggregrator like 1.5%
+    mop_commission_ledger = models.CharField(max_length=100, blank=False, null=True)
+    # HandoverDateTime = models.DateTimeField(auto_now_add=True)
+    #created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE , null=False, blank=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    
+    def __str__(self):
+      return self.CentralDataModeOfPayment_id
+    
+class CentralDataSalesType(models.Model):
+    #business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)
+    sales_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz SalesType_id will not be serially assigned to every different business]
+    sales_type_name = models.CharField(max_length=255, blank=False, null=False) #Defaults -> Counter, Delivery, Takeaway/Pickup, D2C etc
+    sales_type_symbol = models.CharField(max_length=255, blank=False, null=False) #Defaults -> CTR, DLV, TAW/PCK, D2C, etc
+    purpose = models.CharField(max_length=750, blank=False, null=False)
+
+    def __str__(self):
+        return self.sales_type_name
+    
+class CentralDataSalesReturnType(models.Model):
+    #business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)
+    sales_return_type_code = models.IntegerField(blank=False, null=False) # 1,2,3,4 [Coz SalesReturnType_id will not be serially assigned to every different business]
+    sales_return_type_name = models.CharField(max_length=255, blank=False, null=False) #Defaults -> Counter, Delivery, Takeaway/Pickup, D2C etc
+    sales_return_type_symbol = models.CharField(max_length=255, blank=False, null=False) #Defaults -> CTR, DLV, TAW/PCK, D2C, etc
+    purpose = models.CharField(max_length=750, blank=False, null=False)
+
+    def __str__(self):
+        return self.sales_return_type_name

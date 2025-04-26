@@ -43,7 +43,14 @@ class BusinessMaster(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, blank=False, null=False)
 
     def __str__(self):
-        return self.businessname
+        return self.business_name
+    
+    def get_business_master_code(self):
+        last_business = BusinessMaster.objects.filter(owner_id=self.owner_id).order_by('-created_at').first()
+    
+        if last_business and last_business.business_master_code:
+            return last_business.business_master_code + 1
+
 
 class LocationType(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)  # Assuming you have a Business model
@@ -60,7 +67,7 @@ class LocationType(models.Model):
     created_by = models.CharField(max_length=100) # How do i put in employee id here?
 
     def __str__(self):
-        return self.name
+        return self.location_type_name
     
 class LocationMaster(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE, blank=False, null=False)  # Assuming you have a Business model

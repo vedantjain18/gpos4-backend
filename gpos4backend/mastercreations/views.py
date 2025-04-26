@@ -66,8 +66,16 @@ class BusniessMasterViewApi(APIView):
         business_data_json = json.loads(business_data_fe)
 
         owner_id = OwnerMaster.objects.get(id=business_data_json['OwnerId'])
+
+        last_business = BusinessMaster.objects.filter(owner_id=owner_id).order_by('-created_at').first()
+    
+        new_code = 1
+        if last_business and last_business.business_master_code:
+             new_code = last_business.business_master_code + 1
+    
         new_business = BusinessMaster.objects.create(
             owner_id = owner_id,
+            business_master_code = new_code,
             business_name = business_data_json['BusinessName'],
             email =  business_data_json['BusinessEmail'],
             mobile =  business_data_json['BusinessMobile'],
@@ -85,7 +93,9 @@ class BusniessMasterViewApi(APIView):
             currency_code =  'RPP',
             country =  business_data_json['Country']
         )
-
+        # new_business.business_master_code = new_business.get_business_master_code()
+        print("new_business", new_business)
+        # print(new_business.business_master_code)
         new_business.save()
 
         x = {
@@ -108,23 +118,31 @@ class BusniessMasterViewApi(APIView):
         return Response(response, status=status.HTTP_200_OK)
     
 class LocationTypeApi(APIView):
-    def post(self, request):
-        location_type_data_fe = request.body.decode('utf-8')
-        location_type_data_json = json.loads(location_type_data_fe)
+    def post(self, request, **kwargs):
+        # location_type_data_fe = request.body.decode('utf-8')
+        location_type_data_json = kwargs['selectedLocationType']
+        print("location_type_data_json", location_type_data_json)
 
-        business_id = BusinessMaster.objects.get(id=location_type_data_json['BusinessId'])
+        business_id = BusinessMaster.objects.get(id=kwargs['business_id'])
+
+        last_location = LocationType.objects.filter(business_id=business_id).order_by('-created_at').first()
+
+        new_code = 1
+        if last_location and last_location.location_type_code:
+             new_code = last_location.location_type_code + 1
+
         new_location_type = LocationType.objects.create(
             business_id = business_id,
-            location_type_code = location_type_data_json['LocationTypeCode'],
-            location_type_name = location_type_data_json['LocationTypeName'],
-            purpose = location_type_data_json['Purpose'],
-            is_sale_permitted = location_type_data_json['IsSalePermitted'],
-            is_purchase_permitted = location_type_data_json['IsPurchasePermitted'],
-            is_stock_permitted = location_type_data_json['IsStockPermitted'],
-            is_production_permitted = location_type_data_json['IsProductionPermitted'],
-            employee_limit = location_type_data_json['EmployeeLimit'],
-            is_active = location_type_data_json['IsActive'],
-            created_by = location_type_data_json['CreatedBy']
+            location_type_code = new_code,
+            location_type_name = location_type_data_json['location_type_name'],
+            purpose = location_type_data_json['purpose'],
+            is_sale_permitted = location_type_data_json['is_sale_permitted'],
+            is_purchase_permitted = location_type_data_json['is_purchase_permitted'],
+            is_stock_permitted = location_type_data_json['is_stock_permitted'],
+            is_production_permitted = location_type_data_json['is_production_permitted'],
+            employee_limit = location_type_data_json['employee_limit'],
+            is_active = location_type_data_json['is_active'],
+            # created_by = business_id,
         )
 
         new_location_type.save()
@@ -132,7 +150,8 @@ class LocationTypeApi(APIView):
         x = {
             'success': True,
             'status_code': 201,
-            'data': new_location_type.id,
+            'data': new_location_type,
+            'id': new_location_type.id,
             'message': f"Location Type with id: {new_location_type.id} created successfully",
         }
         return Response(x, status=201)
@@ -153,16 +172,28 @@ class LocationMasterApi(APIView):
         location_data_fe = request.body.decode('utf-8')
         location_data_json = json.loads(location_data_fe)
 
+        location_type_response = LocationTypeApi.post(self, request, selectedLocationType=location_data_json['selectedLocationType'], business_id=location_data_json['BusinessId'])
+        print("location_type_response", location_type_response.data)
+        
         business_id = BusinessMaster.objects.get(id=location_data_json['BusinessId'])
+        print("business_id", business_id)
+        
+        last_location = LocationMaster.objects.filter(business_id=business_id).order_by('-created_at').first()
+
+        new_code = 1
+        if last_location and last_location.location_master_code:
+             new_code = last_location.location_master_code + 1
+
+        
         new_location = LocationMaster.objects.create(
             business_id = business_id,
-            location_master_code = location_data_json['LocationMasterCode'],
-            name = location_data_json['Name'],
-            location_type_id = location_data_json['LocationTypeId'],
-            email = location_data_json['Email'],
-            phone = location_data_json['Phone'],
-            whatsapp = location_data_json['Whatsapp'],
-            address = location_data_json['Address'],
+            location_master_code = new_code,
+            name = location_data_json['LocationName'],
+            location_type_id = location_type_response.data["data"],
+            email = location_data_json['LocationEmail'],
+            phone = location_data_json['LocationMobile'],
+            whatsapp = location_data_json['LocationWhatsapp'],
+            address = location_data_json['LocationAddress1'],
             city = location_data_json['City'],
             pin = location_data_json['Pincode'],
             district = location_data_json['District'],
