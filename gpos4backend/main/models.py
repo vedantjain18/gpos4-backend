@@ -44,7 +44,7 @@ class ItemTaxContainer(models.Model):
 class ItemHSN(models.Model):
     business_id = models.ForeignKey(BusinessMaster, on_delete=models.CASCADE)
     item_hsn = models.CharField(max_length=255)
-    item_hsn_desc = models.CharField(max_length=255)
+    item_hsn_desc = models.CharField(max_length=5255)
     item_hsn_type = models.CharField(max_length=255) # HSN Or SAC
     item_hsn_category = models.CharField(max_length=255) # 2 Digit / 4 Digit / 8 Digit HSN Code [0 For SAC]
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?

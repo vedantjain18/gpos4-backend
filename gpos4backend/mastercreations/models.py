@@ -33,7 +33,7 @@ class BusinessMaster(models.Model):
     gstin = models.TextField(blank=True, null=True)
     city = models.CharField(max_length=255, blank=False, null=False)
     pin = models.CharField(max_length=10, blank=False, null=False)
-    district = models.CharField(max_length=10, blank=False, null=False)
+    district = models.CharField(max_length=100, blank=False, null=False)
     state = models.CharField(max_length=255, blank=False, null=False)
     currency_name = models.CharField(max_length=255, blank=False, null=False)
     currency_symbol = models.CharField(max_length=255, blank=False, null=False)
