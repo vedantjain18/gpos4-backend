@@ -138,6 +138,8 @@ class StockRegister(models.Model):
     item_barcode = models.BigIntegerField(blank=False, null=False,)  # Set default value to 0
     child_barcode = models.BigIntegerField(blank=False, null=False,)
     loc_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE, blank=False, null=False)
+    created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE, blank=False, null=True) # How do i put in employee id here?
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.item_id

@@ -44,7 +44,7 @@ class AccountsMaster(models.Model):
     acc_gstin = models.CharField(max_length=15, null=True, blank=True)
     acc_g_loc_lat = models.DecimalField(max_digits=100, decimal_places=100, null=True, blank=True)
     acc_g_loc_lang = models.DecimalField(max_digits=100, decimal_places=100, null=True, blank=True)
-    acc_mob = models.PositiveIntegerField(unique=True, null=False, blank=False)
+    acc_mob = models.DecimalField(max_digits=10, decimal_places=0, null=True, blank=True)
     acc_phone = models.CharField(max_length=10, null=True, blank=True)
     acc_email = models.CharField(max_length=120, null=True, blank=True)
     acc_opp_bal = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=False) # Set default to 0

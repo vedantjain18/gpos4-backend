@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import PurchaseInvoiceRegister, PurchaseInvoicePending, PurchaseOrderRegister, PurchaseChallanRegister
+from .models import PurchaseInvoiceRegister, PurchaseInvoicePending, PurchaseOrderRegister, PurchaseChallanRegister, PurchaseInvoiceRegisterDetails
 
 class PurchaseInvoiceRegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -19,4 +19,9 @@ class PurchaseOrderRegisterSerializer(serializers.ModelSerializer):
 class PurchaseChallanRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseChallanRegister
+        fields = '__all__'
+
+class PurchaseInvoiceRegisterDetailsSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseInvoiceRegisterDetails
         fields = '__all__'
