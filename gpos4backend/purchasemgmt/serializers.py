@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import PurchaseInvoiceRegister, PurchaseInvoicePending, PurchaseOrderRegister, PurchaseChallanRegister, PurchaseInvoiceRegisterDetails
+from main.serializers import ItemTaxMasterSerializer
 
 class PurchaseInvoiceRegisterSerializer(serializers.ModelSerializer):
     class Meta:
@@ -7,6 +8,7 @@ class PurchaseInvoiceRegisterSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class PurchaseInvoicePendingSerializer(serializers.ModelSerializer):
+    item_tax_id = ItemTaxMasterSerializer(read_only=True)
     class Meta:
         model = PurchaseInvoicePending
         fields = '__all__'

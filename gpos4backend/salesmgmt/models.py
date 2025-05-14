@@ -52,7 +52,7 @@ class SalesBillPending(models.Model):
 class SalesReturnBillPending(models.Model):
     business_id = models.ForeignKey(BusinessMaster,on_delete=models.CASCADE,blank=False, null=False)
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
-    sales_bill_number = models.CharField(blank=False, null=False, max_length=50)
+    sales_bill_number = models.BigIntegerField(blank=False, null=False)
     item_master_id = models.ForeignKey(ItemMaster, on_delete=models.CASCADE,  blank=False, null=False) #discuss on_delete. data will be deleted from this table everytime a bill is saved. should we use foreign key? and if yes, should we remove the on_delete condition?
     item_barcode = models.CharField(blank=False, null=False, max_length=50)
     item_child_barcode = models.CharField(blank=False, null=False, max_length=50)
@@ -76,7 +76,7 @@ class SalesRegister(models.Model):
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE, blank=False, null=False)
     financial_year = models.CharField(blank=False, null=False, max_length=50)
     sales_type_id = models.ForeignKey(SalesType, on_delete=models.CASCADE, blank=False, null=False) #  CTR, DLV, TAW/PCK, D2C, etc
-    bill_num = models.CharField(blank=False, null=False, max_length=50, unique=True)
+    bill_num = models.BigIntegerField(blank=False, null=False)
     customer_master_id = models.ForeignKey(CustomerMaster, on_delete=models.CASCADE, blank=False, null=False)
     sale_date_time = models.DateTimeField(auto_now_add=True) # sale_date_time & created_at both are required in case of date changed bill creation
     bill_total = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2) # keeping this for now for fast calculations & to insert under 'payment modes'
@@ -105,9 +105,9 @@ class SalesRegisterDetails(models.Model):
     item_mrp = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     item_pur_rate = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
     item_sale_rate = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
-    item_qty = models.IntegerField(blank=False, null=False)
-    item_gst_rate = models.IntegerField(blank=False, null=False)
-    item_row_total = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2) # keeping this for now for fast calculations & to insert under 'payment modes'
+    item_qty = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)
+    item_gst_rate = models.ForeignKey(ItemTaxMaster, on_delete=models.CASCADE, blank=False, null=False) # item_gst_rate = item_tax_id
+    #item_row_total = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2) # keeping this for now for fast calculations & to insert under 'payment modes'
     # sale_date_time = models.DateTimeField(auto_now_add=True) # sale_date_time & created_at both are required in case of date changed bill creation
     #employee_master_id = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # emp_id and created_by both are required in case the manager is creating a bill on behalf of an eployee
     created_by = models.ForeignKey(EmployeeMaster, on_delete=models.CASCADE,  blank=False, null=False) # How do i put in employee id here?
@@ -166,8 +166,8 @@ class SalesReturnRegister(models.Model):
     location_master_id = models.ForeignKey(LocationMaster, on_delete=models.CASCADE,  blank=False, null=False)
     financial_year = models.CharField(blank=False, null=False, max_length=50)
     sales_return_type_id = models.ForeignKey(SalesReturnType, on_delete=models.CASCADE, blank=False, null=True) #  CTR, DLV, TAW/PCK, D2C, etc.
-    bill_num = models.CharField(blank=False, null=True, max_length=50) #May be null, if in case the employee doesn't want to mention the bill number
-    return_bill_num = models.CharField(blank=False, null=False, max_length=50)
+    bill_num = models.BigIntegerField(blank=False, null=False) #May be null, if in case the employee doesn't want to mention the bill number
+    return_bill_num = models.BigIntegerField(blank=False, null=False)
     customer_master_id = models.ForeignKey(CustomerMaster, on_delete=models.CASCADE,  blank=False, null=False)
     sale_return_date_time = models.DateTimeField(auto_now_add=True) # sale_date_time & created_at both are required in case of date changed bill creation
     total_amount = models.DecimalField(blank=False, null=False, max_digits=10, decimal_places=2)

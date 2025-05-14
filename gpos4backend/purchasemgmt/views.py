@@ -111,7 +111,7 @@ class PurchaseInvoicePendingApi(APIView):
     def get(self, request):
         business_idx = request.GET.get("business_id")
         employee_master_id = request.GET.get("employee_master_id")
-        result = PurchaseInvoicePending.objects.filter(business_id=business_idx, employee_master_id=employee_master_id) 
+        result = PurchaseInvoicePending.objects.filter(business_id=business_idx, created_by=employee_master_id) 
         response = {
             'success': True,
             'status_code': status.HTTP_200_OK,
@@ -156,7 +156,7 @@ class PurchaseInvoicePendingApi(APIView):
 
             #Fetch these from the itemBarcode table
             item_barcode= last_barcode.item_barcode,
-            item_child_barcode= last_barcode.item_barcode,
+            item_child_barcode= last_barcode.item_barcode, # X5 B1 I3251
 
             #will get from StockRegisterDetails (Latest value)
             item_child_sales_rate= last_rates is not None and last_rates.item_sale_rate or 0,
@@ -173,6 +173,27 @@ class PurchaseInvoicePendingApi(APIView):
             'message': f"Pur Inv Pending with id: {new_pur_inv_pending.id} created successfully",
         }
         return Response(x, status=201)
+  
+    def patch(self, request):
+        purhase_id = request.data.get("id")
+        field = request.data.get("field")
+        value = request.data.get("value")
+        if not all([purhase_id, field]):
+            return Response({"error": "Missing parameters"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            purchasependingitem = PurchaseInvoicePending.objects.get(id=purhase_id)
+            setattr(purchasependingitem, field, value)
+            purchasependingitem.save()
+            return Response({"success": True, "updated_field": field, "data": PurchaseInvoicePendingSerializer(purchasependingitem).data,})
+        except PurchaseInvoicePending.DoesNotExist:
+            return Response({"error": "Item not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+
+
+    
+
     
 class PurchaseOrderRegisterApi(APIView):
     def get(self, request):
