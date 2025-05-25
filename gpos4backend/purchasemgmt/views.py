@@ -168,7 +168,7 @@ class PurchaseInvoicePendingApi(APIView):
 
         x = {
             'success': True,
-            'status_code': 201,
+            'status_code': 201, 
             'data': PurchaseInvoicePendingSerializer(new_pur_inv_pending).data,
             'message': f"Pur Inv Pending with id: {new_pur_inv_pending.id} created successfully",
         }
@@ -182,13 +182,33 @@ class PurchaseInvoicePendingApi(APIView):
             return Response({"error": "Missing parameters"}, status=status.HTTP_400_BAD_REQUEST)
         try:
             purchasependingitem = PurchaseInvoicePending.objects.get(id=purhase_id)
-            setattr(purchasependingitem, field, value)
+            if field == "item_tax_id":
+                item_tax_id = value.get("id") if isinstance(value, dict) else None
+                if not item_tax_id:
+                    return Response({"error": "Invalid item_tax_id"}, status=status.HTTP_400_BAD_REQUEST)
+                setattr(purchasependingitem, "item_tax_id_id", item_tax_id)
+            else:
+                setattr(purchasependingitem, field, value)
             purchasependingitem.save()
             return Response({"success": True, "updated_field": field, "data": PurchaseInvoicePendingSerializer(purchasependingitem).data,})
         except PurchaseInvoicePending.DoesNotExist:
             return Response({"error": "Item not found"}, status=status.HTTP_404_NOT_FOUND)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
+    def delete(self, request):
+        purchase_item_id = request.data.get("id")
+        if not purchase_item_id:
+            return Response({"error": "Missing purchase ID"}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            purchasependingitem = PurchaseInvoicePending.objects.get(id=purchase_item_id)
+            purchasependingitem.delete()
+            return Response({"success": True, "message": "Item deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+        except PurchaseInvoicePending.DoesNotExist:
+            return Response({"error": "Item not found"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
 
 
 
